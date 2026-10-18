@@ -41,7 +41,7 @@
             background: var(--card-bg);
             padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 / 0.1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             box-sizing: border-box;
         }
         h1 {
@@ -348,7 +348,12 @@
                 selectedElement = element;
                 element.classList.add('selected');
             } else {
-                if (selectedElement.dataset.pairId === element.dataset.pairId && selectedElement.dataset.type !== element.dataset.type) {
+                const id1 = parseInt(selectedElement.dataset.pairId, 10);
+                const id2 = parseInt(element.dataset.pairId, 10);
+                const type1 = selectedElement.dataset.type;
+                const type2 = element.dataset.type;
+
+                if (id1 === id2 && type1 !== type2) {
                     selectedElement.classList.remove('selected');
                     selectedElement.classList.add('matched');
                     element.classList.add('matched');
