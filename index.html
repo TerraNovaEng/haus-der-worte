@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German-English Flashcards & Matching Game</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇩🇪</text></svg>">
+    
     <!-- PWA Meta Tags & Icons -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
@@ -301,9 +304,10 @@
             let roundCards = shuffled.slice(0, 4);
 
             let gameTiles = [];
-            roundCards.forEach(item => {
-                gameTiles.push({ text: item.german, id: item.id, type: 'german' });
-                gameTiles.push({ text: item.english, id: item.id, type: 'english' });
+            roundCards.forEach((item, index) => {
+                // Assign a unique pair identifier (index) so the correct match is validated properly
+                gameTiles.push({ text: item.german, pairId: index, type: 'german' });
+                gameTiles.push({ text: item.english, pairId: index, type: 'english' });
             });
 
             gameTiles.sort(() => 0.5 - Math.random());
@@ -312,7 +316,7 @@
                 const div = document.createElement('div');
                 div.className = 'match-card';
                 div.innerText = tile.text;
-                div.dataset.id = tile.id;
+                div.dataset.pairId = tile.pairId;
                 div.dataset.type = tile.type;
                 div.onclick = () => selectTile(div);
                 grid.appendChild(div);
@@ -326,7 +330,7 @@
                 selectedElement = element;
                 element.classList.add('selected');
             } else {
-                if (selectedElement.dataset.id === element.dataset.id && selectedElement.dataset.type !== element.dataset.type) {
+                if (selectedElement.dataset.pairId === element.dataset.pairId && selectedElement.dataset.type !== element.dataset.type) {
                     selectedElement.classList.remove('selected');
                     selectedElement.classList.add('matched');
                     element.classList.add('matched');
