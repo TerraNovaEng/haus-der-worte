@@ -1,9 +1,15 @@
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German-English Flashcards & Matching Game</title>
+    
+    <!-- PWA Meta Tags & Icons -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <style>
         :root {
             --primary: #4f46e5;
@@ -180,7 +186,7 @@ html_content = """<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
-        <h1>Terranova German Lernnen</h1>
+        <h1>Terranova German Lernen</h1>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('flashcards')">Flashcards</button>
             <button class="tab-btn" onclick="switchTab('matching')">Matching Game</button>
@@ -219,6 +225,15 @@ html_content = """<!DOCTYPE html>
     </div>
 
     <script>
+        // Register Service Worker for PWA Offline Support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
         let cards = [];
         let currentIndex = 0;
         let isFlipped = false;
@@ -340,9 +355,3 @@ html_content = """<!DOCTYPE html>
     </script>
 </body>
 </html>
-"""
-
-with open('index.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("index.html created successfully!")
