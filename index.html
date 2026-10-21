@@ -54,10 +54,10 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
-        .tab-btn {
-            padding: 10px 20px;
+        .tab-btn, .cat-btn {
+            padding: 8px 16px;
             border: none;
             background: var(--border);
             color: var(--text);
@@ -65,10 +65,18 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.9rem;
         }
-        .tab-btn.active {
+        .tab-btn.active, .cat-btn.active {
             background: var(--primary);
             color: white;
+        }
+        .category-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
         .mode-section {
             display: none;
@@ -193,6 +201,15 @@
 <body>
     <div class="container">
         <h1>Terranova German Lernen</h1>
+        
+        <!-- Category Filter Buttons -->
+        <div class="category-container">
+            <button class="cat-btn active" onclick="filterCategory('All')">All Decks</button>
+            <button class="cat-btn" onclick="filterCategory('Briefmarken')">Briefmarken</button>
+            <button class="cat-btn" onclick="filterCategory('Abstrakte Konzepte')">Abstrakte Konzepte</button>
+        </div>
+
+        <!-- Mode Tabs -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('flashcards')">Flashcards</button>
             <button class="tab-btn" onclick="switchTab('matching')">Matching Game</button>
@@ -240,19 +257,36 @@
             });
         }
 
+        let allCards = [];
         let cards = [];
         let currentIndex = 0;
         let isFlipped = false;
+        let currentCategory = 'All';
 
         async function loadData() {
             try {
                 const response = await fetch('flashcards.json');
-                cards = await response.json();
-                updateCard();
-                initMatchingGame();
+                allCards = await response.json();
+                filterCategory('All');
             } catch (e) {
                 document.getElementById('front-text').innerText = "Error loading flashcards.json";
             }
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                if (b.innerText.includes(cat) || (cat === 'All' && b.innerText.includes('All'))) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
+            cards = cat === 'All' ? allCards : allCards.filter(c => c.category === cat);
+            currentIndex = 0;
+            updateCard();
+            initMatchingGame();
         }
 
         function switchTab(tab) {
@@ -268,7 +302,12 @@
         }
 
         function updateCard() {
-            if (cards.length === 0) return;
+            if (cards.length === 0) {
+                document.getElementById('front-text').innerText = "No cards in this category";
+                document.getElementById('back-text').innerText = "No cards";
+                document.getElementById('card-counter').innerText = "Card 0 of 0";
+                return;
+            }
             isFlipped = false;
             document.getElementById('flashcard').classList.remove('flipped');
             document.getElementById('front-text').innerText = cards[currentIndex].german;
@@ -282,16 +321,19 @@
         }
 
         function nextCard() {
+            if (cards.length === 0) return;
             currentIndex = (currentIndex + 1) % cards.length;
             updateCard();
         }
 
         function prevCard() {
+            if (cards.length === 0) return;
             currentIndex = (currentIndex - 1 + cards.length) % cards.length;
             updateCard();
         }
 
         function randomCard() {
+            if (cards.length === 0) return;
             currentIndex = Math.floor(Math.random() * cards.length);
             updateCard();
         }
@@ -303,7 +345,6 @@
             const grid = document.getElementById('matching-grid');
             grid.innerHTML = '';
             
-            // Filter out any cards missing valid translations
             const validCards = cards.filter(item => 
                 item && 
                 item.german && 
@@ -313,11 +354,10 @@
             );
             
             if (validCards.length < 4) {
-                grid.innerHTML = `<div style="grid-column: span 2; text-align: center; color: red;">Not enough valid translation pairs found in JSON.</div>`;
+                grid.innerHTML = `<div style="grid-column: span 2; text-align: center; color: red;">Not enough valid translation pairs in this category.</div>`;
                 return;
             }
 
-            // Shuffle and pick 4 distinct valid items for the round
             let shuffled = [...validCards].sort(() => 0.5 - Math.random());
             let roundCards = shuffled.slice(0, 4);
 
@@ -327,7 +367,6 @@
                 gameTiles.push({ text: item.english.trim(), pairId: index, type: 'english' });
             });
 
-            // Shuffle board tiles
             gameTiles.sort(() => 0.5 - Math.random());
 
             gameTiles.forEach(tile => {
