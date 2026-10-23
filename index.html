@@ -1,464 +1,385 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="en" class="h-full">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terranova German Lernen</title>
-    <script data-goatcounter="https://paulacavalcanti.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇩🇪</text></svg>">
-    
-    <!-- PWA Meta Tags & Icons -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4f46e5">
-    <link rel="apple-touch-icon" href="icon-192.svg">
 
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --text: #1f2937;
-            --border: #e5e7eb;
-            --success: #10b981;
-        }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            box-sizing: border-box;
-        }
-        h1 {
-            margin-top: 0;
-            font-size: 1.8rem;
-            text-align: center;
-            color: var(--primary);
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tab-btn, .cat-btn {
-            padding: 8px 16px;
-            border: none;
-            background: var(--border);
-            color: var(--text);
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-        .tab-btn.active, .cat-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-        .category-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-        .mode-section {
-            display: none;
-        }
-        .mode-section.active {
-            display: block;
-        }
-        /* Flashcard Styles */
-        .flashcard-container {
-            perspective: 1000px;
-            width: 100%;
-            height: 250px;
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-        .flashcard {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            padding: 20px;
-            box-sizing: border-box;
-            font-size: 1.5rem;
-            text-align: center;
-        }
-        .card-front {
-            background: #ffffff;
-            color: var(--text);
-            border: 2px solid var(--border);
-        }
-        .card-back {
-            background: var(--primary);
-            color: white;
-            transform: rotateY(180deg);
-        }
-        .card-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.7;
-            margin-bottom: 10px;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .jump-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border);
-        }
-        .jump-input {
-            width: 80px;
-            padding: 8px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        .jump-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        button.action-btn {
-            padding: 10px 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        button.action-btn:hover {
-            background: var(--primary-hover);
-        }
-        /* Matching Game Styles */
-        .matching-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .match-card {
-            background: white;
-            border: 2px solid var(--border);
-            padding: 12px 10px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-break: break-word;
-        }
-        .match-card:hover {
-            border-color: var(--primary);
-        }
-        .match-card.selected {
-            background: #e0e7ff;
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .match-card.matched {
-            background: #d1fae5;
-            border-color: var(--success);
-            color: #065f46;
-            cursor: default;
-            opacity: 0.6;
-        }
-        .stats {
-            text-align: center;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Terranova German Lernen</h1>
-        
-        <!-- Category Filter Buttons -->
-        <div class="category-container">
-            <button class="cat-btn active" onclick="filterCategory('All')">All Decks</button>
-            <button class="cat-btn" onclick="filterCategory('Briefmarken')">Briefmarken</button>
-            <button class="cat-btn" onclick="filterCategory('Abstrakte Konzepte')">Abstrakte Konzepte</button>
-        </div>
+    <title>TerraNova Learning & Survey Hub</title>
 
-        <!-- Mode Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('flashcards')">Flashcards</button>
-            <button class="tab-btn" onclick="switchTab('matching')">Matching Game</button>
-        </div>
+    <!-- Tailwind CSS CDN -->
 
-        <!-- Flashcard Mode -->
-        <div id="flashcards-section" class="mode-section active">
-            <div class="stats" id="card-counter">Card 1 of 0</div>
-            <div class="flashcard-container" onclick="flipCard()">
-                <div class="flashcard" id="flashcard">
-                    <div class="card-face card-front">
-                        <div class="card-label">German</div>
-                        <div id="front-text">Loading...</div>
-                    </div>
-                    <div class="card-face card-back">
-                        <div class="card-label">English</div>
-                        <div id="back-text">Loading...</div>
-                    </div>
-                </div>
-            </div>
-            <div class="controls">
-                <button class="action-btn" onclick="prevCard()">Previous</button>
-                <button class="action-btn" onclick="randomCard()">Random</button>
-                <button class="action-btn" onclick="nextCard()">Next</button>
-            </div>
-            <div class="jump-container">
-                <label for="jump-input" style="font-size: 0.9rem; font-weight: 600;">Go to card:</label>
-                <input type="number" id="jump-input" class="jump-input" min="1" placeholder="200">
-                <button class="action-btn" onclick="jumpToCard()">Go</button>
-            </div>
-        </div>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Matching Game Mode -->
-        <div id="matching-section" class="mode-section">
-            <div class="stats">Match German words with their English translations!</div>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <button class="action-btn" onclick="initMatchingGame()">New Round</button>
-            </div>
-            <div class="matching-grid" id="matching-grid"></div>
-        </div>
-    </div>
+    <!-- Google Fonts Inter -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome for Icons -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
-        // Register Service Worker for PWA Offline Support
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registered!', reg))
-                    .catch(err => console.log('Service Worker registration failed:', err));
-            });
-        }
 
-        let allCards = [];
-        let cards = [];
-        let currentIndex = 0;
-        let isFlipped = false;
-        let currentCategory = 'All';
+        tailwind.config = {
 
-        async function loadData() {
-            try {
-                const response = await fetch('flashcards.json');
-                allCards = await response.json();
-                filterCategory('All');
-            } catch (e) {
-                document.getElementById('front-text').innerText = "Error loading flashcards.json";
-            }
-        }
+            theme: {
 
-        function filterCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                if (b.innerText.includes(cat) || (cat === 'All' && b.innerText.includes('All'))) {
-                    b.classList.add('active');
-                } else {
-                    b.classList.remove('active');
+                extend: {
+
+                    fontFamily: {
+
+                        sans: ['Inter', 'sans-serif'],
+
+                    },
+
                 }
-            });
 
-            cards = cat === 'All' ? allCards : allCards.filter(c => c.category === cat);
-            currentIndex = 0;
-            updateCard();
-            initMatchingGame();
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
-            if (tab === 'flashcards') {
-                document.querySelector('button[onclick*="flashcards"]').classList.add('active');
-                document.getElementById('flashcards-section').classList.add('active');
-            } else {
-                document.querySelector('button[onclick*="matching"]').classList.add('active');
-                document.getElementById('matching-section').classList.add('active');
-            }
-        }
-
-        function updateCard() {
-            if (cards.length === 0) {
-                document.getElementById('front-text').innerText = "No cards in this category";
-                document.getElementById('back-text').innerText = "No cards";
-                document.getElementById('card-counter').innerText = "Card 0 of 0";
-                return;
-            }
-            isFlipped = false;
-            document.getElementById('flashcard').classList.remove('flipped');
-            document.getElementById('front-text').innerText = cards[currentIndex].german;
-            document.getElementById('back-text').innerText = cards[currentIndex].english;
-            document.getElementById('card-counter').innerText = `Card ${currentIndex + 1} of ${cards.length}`;
-            document.getElementById('jump-input').max = cards.length;
-        }
-
-        function flipCard() {
-            isFlipped = !isFlipped;
-            document.getElementById('flashcard').classList.toggle('flipped', isFlipped);
-        }
-
-        function nextCard() {
-            if (cards.length === 0) return;
-            currentIndex = (currentIndex + 1) % cards.length;
-            updateCard();
-        }
-
-        function prevCard() {
-            if (cards.length === 0) return;
-            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
-            updateCard();
-        }
-
-        function randomCard() {
-            if (cards.length === 0) return;
-            currentIndex = Math.floor(Math.random() * cards.length);
-            updateCard();
-        }
-
-        function jumpToCard() {
-            if (cards.length === 0) return;
-            const inputVal = parseInt(document.getElementById('jump-input').value, 10);
-            
-            if (isNaN(inputVal)) return;
-
-            // Convert 1-based user numbering to 0-based index (clamp between 1 and total cards)
-            const targetIndex = Math.max(1, Math.min(inputVal, cards.length)) - 1;
-            currentIndex = targetIndex;
-            updateCard();
-        }
-
-        let selectedElement = null;
-
-        function initMatchingGame() {
-            if (!cards || cards.length === 0) return;
-            const grid = document.getElementById('matching-grid');
-            grid.innerHTML = '';
-            
-            const validCards = cards.filter(item => 
-                item && 
-                item.german && 
-                item.english && 
-                item.german.trim() !== "" && 
-                item.english.trim() !== ""
-            );
-            
-            if (validCards.length < 4) {
-                grid.innerHTML = `<div style="grid-column: span 2; text-align: center; color: red;">Not enough valid translation pairs in this category.</div>`;
-                return;
             }
 
-            let shuffled = [...validCards].sort(() => 0.5 - Math.random());
-            let roundCards = shuffled.slice(0, 4);
-
-            let gameTiles = [];
-            roundCards.forEach((item, index) => {
-                gameTiles.push({ text: item.german.trim(), pairId: index, type: 'german' });
-                gameTiles.push({ text: item.english.trim(), pairId: index, type: 'english' });
-            });
-
-            gameTiles.sort(() => 0.5 - Math.random());
-
-            gameTiles.forEach(tile => {
-                const div = document.createElement('div');
-                div.className = 'match-card';
-                div.innerText = tile.text;
-                div.dataset.pairId = tile.pairId;
-                div.dataset.type = tile.type;
-                div.onclick = () => selectTile(div);
-                grid.appendChild(div);
-            });
         }
 
-        function selectTile(element) {
-            if (element.classList.contains('matched') || element.classList.contains('selected')) return;
-
-            if (!selectedElement) {
-                selectedElement = element;
-                element.classList.add('selected');
-            } else {
-                const id1 = parseInt(selectedElement.dataset.pairId, 10);
-                const id2 = parseInt(element.dataset.pairId, 10);
-                const type1 = selectedElement.dataset.type;
-                const type2 = element.dataset.type;
-
-                if (id1 === id2 && type1 !== type2) {
-                    selectedElement.classList.remove('selected');
-                    selectedElement.classList.add('matched');
-                    element.classList.add('matched');
-                    selectedElement = null;
-                    
-                    if (document.querySelectorAll('.match-card:not(.matched)').length === 0) {
-                        setTimeout(() => {
-                            alert('Awesome! Round complete.');
-                            initMatchingGame();
-                        }, 300);
-                    }
-                } else {
-                    selectedElement.classList.add('selected');
-                    element.classList.add('selected');
-                    let prev = selectedElement;
-                    setTimeout(() => {
-                        prev.classList.remove('selected');
-                        element.classList.remove('selected');
-                    }, 400);
-                    selectedElement = null;
-                }
-            }
-        }
-
-        loadData();
     </script>
+
+</head>
+
+<body class="h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+
+
+    <!-- Header Section -->
+
+    <header class="w-full py-8 px-6 text-center border-b border-slate-800/80 backdrop-blur-md bg-slate-900/50 sticky top-0 z-50">
+
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+
+            <div class="flex items-center space-x-3">
+
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-teal-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+
+                    <i class="fa-solid fa-graduation-cap text-slate-950 text-lg"></i>
+
+                </div>
+
+                <div class="text-left">
+
+                    <h1 class="text-xl font-bold tracking-tight text-white">TerraNova Hub</h1>
+
+                    <p class="text-xs text-slate-400">Deutsch Classrooms, Surveys & Web ApPortal</p>
+
+                </div>
+
+            </div>
+
+            <div class="text-xs text-slate-400 bg-slate-800/60 px-3.5 py-1.5 rounded-full border border-slate-700/50 flex items-center gap-2">
+
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+
+                Active Portal
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- Main Content Hub Grid -->
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-6 py-12 flex flex-col justify-center">
+
+        
+
+        <div class="text-center mb-10">
+
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">Welcome to Your Learning Portal</h2>
+
+            <p class="text-slate-400 max-w-lg mx-auto text-sm sm:text-base">Access course materials, participate in surveys, and join our virtual classrooms seamlessly.</p>
+
+        </div>
+
+
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+
+
+            <!-- Card 1: Survey -->
+
+            <div class="group relative bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/60 hover:border-indigo-500/50 rounded-2xl p-6 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-indigo-500/10 flex flex-col justify-between">
+
+                <div>
+
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+
+                        <i class="fa-solid fa-square-poll-vertical text-xl"></i>
+
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-indigo-300 transition-colors">Survey Portal</h3>
+
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">Share your feedback and complete active surveys to help improve our programs.</p>
+
+                </div>
+
+                <a href="https://terranovaeng.github.io/survey/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-between w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-md shadow-indigo-600/30 group-hover:translate-y-[-2px]">
+
+                    <span>Open Survey</span>
+
+                    <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- Card 2: Haus der Worte Deutsch -->
+
+            <div class="group relative bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/60 hover:border-teal-500/50 rounded-2xl p-6 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-teal-500/10 flex flex-col justify-between">
+
+                <div>
+
+                    <div class="w-12 h-12 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+
+                        <i class="fa-solid fa-book-open-reader text-xl"></i>
+
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-teal-300 transition-colors">Haus der Worte Deutsch</h3>
+
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">Explore German vocabulary, flashcards and interactive modules.</p>
+
+                </div>
+
+                <a href="https://terranovaeng.github.io/haus-der-worte-deutsch/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-between w-full py-3 px-4 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-medium text-sm transition-all shadow-md shadow-teal-600/30 group-hover:translate-y-[-2px]">
+
+                    <span>Open Portal</span>
+
+                    <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- Card 3: Google Classroom -->
+
+            <div class="group relative bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/60 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between">
+
+                <div>
+
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+
+                        <i class="fa-brands fa-google text-xl"></i>
+
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-white mb-2 group-hover:text-amber-300 transition-colors">Google Classroom</h3>
+
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">Join assignments, discussions, and class updates directly.</p>
+
+                    
+
+                    <!-- Class Code Box -->
+
+                    <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3 mb-6 flex items-center justify-between">
+
+                        <div>
+
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-0.5">Class Code</span>
+
+                            <span id="classCodeText" class="font-mono text-sm font-bold text-amber-400 tracking-wider">nq66rh3v</span>
+
+                        </div>
+
+                        <button onclick="copyClassCode(this)" title="Copy Class Code" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors active:scale-95 text-xs flex items-center gap-1.5 border border-slate-700">
+
+                            <i class="fa-regular fa-copy"></i>
+
+                            <span class="copy-label">Copy</span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <a href="https://classroom.google.com/c/ODkyOTg1Njk4OTkw?cjc=nq66rh3v" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-between w-full py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-semibold text-sm transition-all shadow-md shadow-amber-600/30 group-hover:translate-y-[-2px]">
+
+                    <span>Join Classroom</span>
+
+                    <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
+
+                </a>
+
+            </div>
+
+
+
+        </div>
+
+
+
+    </main>
+
+
+
+    <!-- Custom Notification Toast -->
+
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+
+        <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">
+
+            <i class="fa-solid fa-check"></i>
+
+        </div>
+
+        <span id="toastMessage" class="text-sm font-medium">Copied to clipboard!</span>
+
+    </div>
+
+
+
+    <!-- Footer -->
+
+    <footer class="w-full py-6 text-center text-xs text-slate-500 border-t border-slate-800/80">
+
+        <p>&copy; 2026 TerraNova Eng & German. All rights reserved.</p>
+
+    </footer>
+
+
+
+    <!-- GoatCounter Analytics Tracker -->
+
+    <script data-goatcounter="https://paulacavalcanti.goatcounter.com/count"
+
+            async src="//gc.zgo.at/count.js"></script>
+
+
+
+    <!-- Script to Handle Copying and Feedback -->
+
+    <script>
+
+        function copyClassCode(buttonElement) {
+
+            const code = "nq66rh3v";
+
+            
+
+            // Fallback copy method compatible with sandbox iframes
+
+            const textArea = document.createElement("textarea");
+
+            textArea.value = code;
+
+            textArea.style.position = "fixed";  // Avoid scrolling to bottom
+
+            document.body.appendChild(textArea);
+
+            textArea.focus();
+
+            textArea.select();
+
+            
+
+            try {
+
+                const successful = document.execCommand('copy');
+
+                if (successful) {
+
+                    showToast("Class code 'nq66rh3v' copied!");
+
+                    
+
+                    // Update button temporarily
+
+                    const label = buttonElement.querySelector('.copy-label');
+
+                    const icon = buttonElement.querySelector('i');
+
+                    if (label) label.textContent = "Copied!";
+
+                    if (icon) {
+
+                        icon.className = "fa-solid fa-check text-emerald-400";
+
+                    }
+
+                    setTimeout(() => {
+
+                        if (label) label.textContent = "Copy";
+
+                        if (icon) {
+
+                            icon.className = "fa-regular fa-copy";
+
+                        }
+
+                    }, 2000);
+
+                } else {
+
+                    showToast("Failed to copy code.", true);
+
+                }
+
+            } catch (err) {
+
+                showToast("Unable to copy automatically.", true);
+
+            }
+
+            
+
+            document.body.removeChild(textArea);
+
+        }
+
+
+
+        function showToast(message, isError = false) {
+
+            const toast = document.getElementById('toast');
+
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+
+            
+
+            if (isError) {
+
+                toast.classList.add('border-red-500/50');
+
+            } else {
+
+                toast.classList.remove('border-red-500/50');
+
+            }
+
+
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            setTimeout(() => {
+
+                toast.classList.add('translate-y-20', 'opacity-0');
+
+            }, 3000);
+
+        }
+
+    </script>
+
 </body>
-</html>
+
+</html> 
