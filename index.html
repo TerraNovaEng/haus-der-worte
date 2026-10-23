@@ -382,7 +382,6 @@
             
             if (isNaN(inputVal)) return;
 
-            // Convert 1-based user numbering to 0-based index (clamp between 1 and total cards)
             const targetIndex = Math.max(1, Math.min(inputVal, cards.length)) - 1;
             currentIndex = targetIndex;
             updateCard();
@@ -448,4 +447,27 @@
                     element.classList.add('matched');
                     selectedElement = null;
                     
-                    if (document.querySelectorAll('.match-card:not
+                    // Check if round is complete
+                    if (document.querySelectorAll('.match-card:not(.matched)').length === 0) {
+                        setTimeout(initMatchingGame, 800);
+                    }
+                } else {
+                    selectedElement.classList.add('selected');
+                    const wrong1 = selectedElement;
+                    const wrong2 = element;
+                    wrong2.classList.add('selected');
+                    
+                    setTimeout(() => {
+                        wrong1.classList.remove('selected');
+                        wrong2.classList.remove('selected');
+                    }, 500);
+                    selectedElement = null;
+                }
+            }
+        }
+
+        // Initialize data load on page start
+        loadData();
+    </script>
+</body>
+</html>
