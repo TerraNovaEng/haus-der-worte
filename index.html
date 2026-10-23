@@ -142,6 +142,28 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
+            margin-bottom: 15px;
+        }
+        .jump-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+        .jump-input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .jump-input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
         button.action-btn {
             padding: 10px 20px;
@@ -236,6 +258,11 @@
                 <button class="action-btn" onclick="randomCard()">Random</button>
                 <button class="action-btn" onclick="nextCard()">Next</button>
             </div>
+            <div class="jump-container">
+                <label for="jump-input" style="font-size: 0.9rem; font-weight: 600;">Go to card:</label>
+                <input type="number" id="jump-input" class="jump-input" min="1" placeholder="200">
+                <button class="action-btn" onclick="jumpToCard()">Go</button>
+            </div>
         </div>
 
         <!-- Matching Game Mode -->
@@ -314,6 +341,7 @@
             document.getElementById('front-text').innerText = cards[currentIndex].german;
             document.getElementById('back-text').innerText = cards[currentIndex].english;
             document.getElementById('card-counter').innerText = `Card ${currentIndex + 1} of ${cards.length}`;
+            document.getElementById('jump-input').max = cards.length;
         }
 
         function flipCard() {
@@ -336,6 +364,18 @@
         function randomCard() {
             if (cards.length === 0) return;
             currentIndex = Math.floor(Math.random() * cards.length);
+            updateCard();
+        }
+
+        function jumpToCard() {
+            if (cards.length === 0) return;
+            const inputVal = parseInt(document.getElementById('jump-input').value, 10);
+            
+            if (isNaN(inputVal)) return;
+
+            // Convert 1-based user numbering to 0-based index (clamp between 1 and total cards)
+            const targetIndex = Math.max(1, Math.min(inputVal, cards.length)) - 1;
+            currentIndex = targetIndex;
             updateCard();
         }
 
